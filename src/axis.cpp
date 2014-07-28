@@ -1581,12 +1581,12 @@ void QCPAxis::setScaleRatio(const QCPAxis *otherAxis, double ratio)
 }
 
 /*!
-  Changes the axis range such that all plottables associated with this axis are fully visible in
+  Calculates a range that would ensure that all plottables associated with this axis are fully visible in
   that dimension.
   
-  \see QCPAbstractPlottable::rescaleAxes, QCustomPlot::rescaleAxes
+  \see rescale
 */
-void QCPAxis::rescale(bool onlyVisiblePlottables)
+QCPRange QCPAxis::rangeForPlottables(bool onlyVisiblePlottables)
 {
   QList<QCPAbstractPlottable*> p = plottables();
   QCPRange newRange;
@@ -1628,8 +1628,21 @@ void QCPAxis::rescale(bool onlyVisiblePlottables)
         newRange.upper = center*qSqrt(mRange.upper/mRange.lower);
       }
     }
-    setRange(newRange);
   }
+  return newRange;
+}
+
+/*!
+  Changes the axis range such that all plottables associated with this axis are fully visible in
+  that dimension.
+  
+  \see QCPAbstractPlottable::rescaleAxes, QCustomPlot::rescaleAxes
+*/
+void QCPAxis::rescale(bool onlyVisiblePlottables)
+{
+  QCPRange newRange = rangeForPlottables(onlyVisiblePlottables);
+  if (QCPRange::validRange(newRange))
+    setRange(newRange);
 }
 
 /*!
