@@ -1923,6 +1923,67 @@ void QCustomPlot::rescaleAxes(bool onlyVisiblePlottables)
 }
 
 /*!
+  Convert a point from pixel offset to the coordinate system described by \ref xAxis and \ref yAxis.
+
+  If \ref xAxis is not available the x coordinate of the return value will be 0; similarly for \ref
+  yAxis and the y coordinate.
+
+  \see QCPAxis::pixelToCoord, xAxis, yAxis
+*/
+QPointF QCustomPlot::mapToCoord(const QPoint& pos) const
+{
+  QPointF rv;
+  if (xAxis) {
+    rv.setX(xAxis->pixelToCoord(pos.x()));
+  }
+  if (yAxis) {
+    rv.setY(yAxis->pixelToCoord(pos.y()));
+  }
+  return rv;
+}
+
+/*!
+  Convert a point from the coordinate system described by \ref xAxis and \ref yAxis to a pixel
+  coordinate.
+
+  If \ref xAxis is not available the x coordinate of the return value will be 0; similarly for \ref
+  yAxis and the y coordinate.
+
+  \see QCPAxis::pixelToCoord, xAxis, yAxis
+*/
+QPoint QCustomPlot::mapFromCoord(const QPointF& pos) const
+{
+  QPoint rv;
+  if (xAxis) {
+    rv.setX(xAxis->coordToPixel(pos.x()));
+  }
+  if (yAxis) {
+    rv.setY(yAxis->coordToPixel(pos.y()));
+  }
+  return rv;
+}
+
+/*!
+  Convert a rectangle from pixel coordinates to the coordinate system described by \ref xAxis and
+  \ref yAxis.
+*/
+QRectF QCustomPlot::mapToCoord(const QRect& rect) const
+{
+  return QRectF(mapToCoord(rect.topLeft()),
+                mapToCoord(rect.bottomRight()));
+}
+
+/*!
+  Convert a rectangle from the coordinate system described by \ref xAxis and \ref yAxis to pixel
+  coordinates.
+*/
+QRect QCustomPlot::mapFromCoord(const QRectF& rect) const
+{
+  return QRect(mapFromCoord(rect.topLeft()),
+               mapFromCoord(rect.bottomRight()));
+}
+
+/*!
   Saves a PDF with the vectorized plot to the file \a fileName. The axis ratio as well as the scale
   of texts and lines will be derived from the specified \a width and \a height. This means, the
   output will look like the normal on-screen output of a QCustomPlot widget with the corresponding

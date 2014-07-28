@@ -165,6 +165,11 @@ public:
   QCPLayoutElement* layoutElementAt(const QPointF &pos) const;
   Q_SLOT void rescaleAxes(bool onlyVisiblePlottables=false);
   
+  QPointF mapToCoord(const QPoint& pos) const;
+  QPoint mapFromCoord(const QPointF& pos) const;
+  QRectF mapToCoord(const QRect& rect) const;
+  QRect mapFromCoord(const QRectF& rect) const;
+
   QList<QCPAxis*> selectedAxes() const;
   QList<QCPLegend*> selectedLegends() const;
   Q_SLOT void deselectAll();
