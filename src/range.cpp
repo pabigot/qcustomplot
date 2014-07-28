@@ -106,7 +106,7 @@ void QCPRange::normalize()
   
   If \a otherRange is already inside the current range, this function does nothing.
   
-  \see expanded
+  \see expanded, truncate
 */
 void QCPRange::expand(const QCPRange &otherRange)
 {
@@ -121,12 +121,55 @@ void QCPRange::expand(const QCPRange &otherRange)
   Returns an expanded range that contains this and \a otherRange. It is assumed that both this
   range and \a otherRange are normalized (see \ref normalize).
   
-  \see expand
+  \see expand, truncated
 */
 QCPRange QCPRange::expanded(const QCPRange &otherRange) const
 {
   QCPRange result = *this;
   result.expand(otherRange);
+  return result;
+}
+
+/*!
+  Truncates this range such that it is contained within \a limitRange. It is assumed that this range
+  is normalized, and \a limitRange is both normalized and valid.
+  
+  If this range is entirely below \a limitRange, it is set to an invalid range at the lower bound of
+  \a limitRange.  If this range is entirely above \a limitRange it is set to an invalid range at the
+  upper bound of \a limitRange.
+  
+  If this range overlaps \a limitRange, its lower bound is adjusted to be no lower than the lower
+  bound of \a limitRange, and its upper bound is adjusted to be no greater than the upper bound of
+  \a limitRange.
+
+  \see truncated, expand, normalize, validRange
+*/
+void QCPRange::truncate(const QCPRange &limitRange)
+{
+  if (upper <= limitRange.lower)
+    upper = lower = limitRange.lower;
+  else if (lower >= limitRange.upper)
+    upper = lower = limitRange.upper;
+  else
+  {
+    if (lower < limitRange.lower)
+      lower = limitRange.lower;
+    if (upper > limitRange.upper)
+      upper = limitRange.upper;
+  }
+}
+
+/*!
+  Returns a truncated range denoting the sub-range of this that lies within the bounds of \a
+  limitRange.  It is assumed that both this range and \a limitRange are normalized (see \ref
+  normalize).
+  
+  \see truncate, expanded
+*/
+QCPRange QCPRange::truncated(const QCPRange &limitRange) const
+{
+  QCPRange result = *this;
+  result.truncate(limitRange);
   return result;
 }
 
